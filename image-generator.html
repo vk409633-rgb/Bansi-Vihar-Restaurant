@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Placeholder Generator - Bansi Vihar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .info {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .image-card {
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .image-info {
+            padding: 1rem;
+        }
+
+        .image-info h3 {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .image-info p {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #f0710b, #e15606);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 113, 11, 0.4);
+        }
+
+        .download-all {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .download-all button {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .download-all button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🍽️ Bansi Vihar - Image Placeholder Generator</h1>
+        <div class="info">
+            <p><strong>Note:</strong> These are temporary placeholder images. For the best website experience, replace
+                them with professional food photography of actual dishes from Bansi Vihar restaurant.</p>
+            <p>Click "Download" on each image to save it to your computer, then place it in the <code>images/</code>
+                folder with the correct filename.</p>
+        </div>
+
+        <div class="download-all">
+            <button onclick="downloadAllImages()">📥 Download All Images as ZIP</button>
+        </div>
+
+        <div class="grid" id="imageGrid"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script>
+        const images = [
+            { name: 'masala-dosa.jpg', title: 'Masala Dosa', color: '#f38f33', text: 'Masala\nDosa' },
+            { name: 'idli-vada.jpg', title: 'Idli Vada', color: '#22c55e', text: 'Idli\nVada' },
+            { name: 'uttapam.jpg', title: 'Uttapam', color: '#f0710b', text: 'Uttapam' },
+            { name: 'deluxe-thali.jpg', title: 'Deluxe Thali', color: '#e15606', text: 'Deluxe\nThali' },
+            { name: 'plain-dosa.jpg', title: 'Plain Dosa', color: '#f7b76d', text: 'Plain\nDosa' },
+            { name: 'paneer-dosa.jpg', title: 'Paneer Dosa', color: '#f38f33', text: 'Paneer\nDosa' },
+            { name: 'onion-masala-dosa.jpg', title: 'Onion Masala Dosa', color: '#f0710b', text: 'Onion\nMasala\nDosa' },
+            { name: 'rava-dosa.jpg', title: 'Rava Dosa', color: '#fad5a5', text: 'Rava\nDosa' },
+            { name: 'mysore-dosa.jpg', title: 'Mysore Dosa', color: '#ba3f08', text: 'Mysore\nDosa' },
+            { name: 'idli.jpg', title: 'Idli', color: '#86efac', text: 'Idli' },
+            { name: 'vada.jpg', title: 'Vada', color: '#4ade80', text: 'Vada' },
+            { name: 'sambar-vada.jpg', title: 'Sambar Vada', color: '#22c55e', text: 'Sambar\nVada' },
+            { name: 'dahi-vada.jpg', title: 'Dahi Vada', color: '#dcfce7', text: 'Dahi\nVada' },
+            { name: 'plain-uttapam.jpg', title: 'Plain Uttapam', color: '#f7b76d', text: 'Plain\nUttapam' },
+            { name: 'tomato-uttapam.jpg', title: 'Tomato Uttapam', color: '#ef4444', text: 'Tomato\nUttapam' },
+            { name: 'veg-uttapam.jpg', title: 'Veg Uttapam', color: '#22c55e', text: 'Veg\nUttapam' },
+            { name: 'mini-thali.jpg', title: 'Mini Thali', color: '#f38f33', text: 'Mini\nThali' },
+            { name: 'filter-coffee.jpg', title: 'Filter Coffee', color: '#78350f', text: 'Filter\nCoffee' },
+            { name: 'masala-tea.jpg', title: 'Masala Tea', color: '#92400e', text: 'Masala\nTea' },
+            { name: 'restaurant-interior.jpg', title: 'Restaurant Interior', color: '#94320e', text: 'Restaurant\nInterior' },
+            { name: 'swiggy-logo.png', title: 'Swiggy Logo', color: '#fc8019', text: 'Swiggy' },
+            { name: 'zomato-logo.png', title: 'Zomato Logo', color: '#e23744', text: 'Zomato' },
+            { name: 'gallery-1.jpg', title: 'Gallery 1', color: '#f0710b', text: 'Gallery\n1' },
+            { name: 'gallery-2.jpg', title: 'Gallery 2', color: '#22c55e', text: 'Gallery\n2' },
+            { name: 'gallery-3.jpg', title: 'Gallery 3', color: '#f38f33', text: 'Gallery\n3' },
+            { name: 'gallery-4.jpg', title: 'Gallery 4', color: '#e15606', text: 'Gallery\n4' },
+            { name: 'gallery-5.jpg', title: 'Gallery 5', color: '#4ade80', text: 'Gallery\n5' },
+            { name: 'gallery-6.jpg', title: 'Gallery 6', color: '#ba3f08', text: 'Gallery\n6' },
+            { name: 'gallery-7.jpg', title: 'Gallery 7', color: '#f7b76d', text: 'Gallery\n7' },
+            { name: 'gallery-8.jpg', title: 'Gallery 8', color: '#16a34a', text: 'Gallery\n8' },
+            { name: 'gallery-9.jpg', title: 'Gallery 9', color: '#94320e', text: 'Gallery\n9' }
+        ];
+
+        function createPlaceholderImage(text, width, height, bgColor) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, width, height);
+
+            // Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const lines = text.split('\n');
+            const lineHeight = 60;
+            const startY = (height / 2) - ((lines.length - 1) * lineHeight / 2);
+
+            lines.forEach((line, index) => {
+                ctx.fillText(line, width / 2, startY + (index * lineHeight));
+            });
+
+            // Add decorative border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(5, 5, width - 10, height - 10);
+
+            return canvas.toDataURL('image/jpeg', 0.9);
+        }
+
+        function downloadImage(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            link.click();
+        }
+
+        function renderImages() {
+            const grid = document.getElementById('imageGrid');
+
+            images.forEach(img => {
+                const dataUrl = createPlaceholderImage(img.text, 800, 600, img.color);
+
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.innerHTML = `
+                    <div class="image-preview" style="background-color: ${img.color}">
+                        ${img.text.replace(/\n/g, '<br>')}
+                    </div>
+                    <div class="image-info">
+                        <h3>${img.title}</h3>
+                        <p><code>${img.name}</code></p>
+                        <button class="download-btn" onclick="downloadImage('${dataUrl}', '${img.name}')">
+                            📥 Download
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function downloadAllImages() {
+            const zip = new JSZip();
+            const imgFolder = zip.folder('images');
+
+            images.forEach(img => {
+                const dataUrl = createPlaceholderImage(img.text, 800, 600, img.color);
+                const base64Data = dataUrl.split(',')[1];
+                imgFolder.file(img.name, base64Data, { base64: true });
+            });
+
+            const content = await zip.generateAsync({ type: 'blob' });
+            saveAs(content, 'bansi-vihar-images.zip');
+        }
+
+        renderImages();
+    </script>
+</body>
+
+</html>
