@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://vk409633-rgb.github.io/Bansi-Vihar-Restaurant/sitemap.xml
+
+# Disallow admin or private files if any
+# Disallow: /private/
